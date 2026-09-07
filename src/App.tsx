@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { WebApp } from "@/lib/telegram";
 import { getStartParam } from "@/lib/telegram";
@@ -52,15 +52,7 @@ export function App() {
     }
   }, [isAuthenticated, navigate]);
 
-  // ── DEV-only theme toggle ─────────────────────────────────────────────────
-  const [devTheme, setDevTheme] = useState<"light" | "dark">(() => {
-    return (document.documentElement.getAttribute("data-theme") as "light" | "dark") ?? "light";
-  });
-  const toggleTheme = () => {
-    const next = devTheme === "light" ? "dark" : "light";
-    document.documentElement.setAttribute("data-theme", next);
-    setDevTheme(next);
-  };
+  // ── DEV-only theme toggle removed (dark mode disabled) ──────────────────────
 
   if (isLoading) return <FullPageSpinner />;
 
@@ -80,24 +72,15 @@ export function App() {
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-      {/* DEV-ONLY banner — tree-shaken in production (import.meta.env.DEV = false) */}
+      {/* DEV-only banner */}
       {import.meta.env.DEV && (
         <div
           role="status"
           aria-label="Development mode — mock user active"
-          style={{ background: "#f59e0b", color: "#000", fontSize: "var(--fs-xs)", fontWeight: 700, padding: "3px 8px", letterSpacing: 0.5, position: "sticky", top: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 6 }}
+          style={{ background: "#f59e0b", color: "#000", fontSize: "var(--fs-xs)", fontWeight: 700, padding: "3px 8px", letterSpacing: 0.5, position: "sticky", top: 0, zIndex: 9999, display: "flex", alignItems: "center", gap: 6 }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <AlertIcon size={12} color="#000" aria-hidden="true" />
-            DEV MODE — Mock User (ID: 999999999)
-          </div>
-          <button
-            type="button"
-            onClick={toggleTheme}
-            style={{ background: "rgba(0,0,0,0.15)", border: "1px solid rgba(0,0,0,0.25)", borderRadius: 4, padding: "2px 8px", fontSize: 10, fontWeight: 700, cursor: "pointer", color: "#000", letterSpacing: 0.3 }}
-          >
-            {devTheme === "light" ? "☀ LIGHT" : "☾ DARK"} — toggle
-          </button>
+          <AlertIcon size={12} color="#000" aria-hidden="true" />
+          DEV MODE — Mock User (ID: 999999999)
         </div>
       )}
       <Routes>
