@@ -1,0 +1,584 @@
+/* ============================================================
+   Connect Digitals — Design Tokens
+   Light: white surfaces / navy text / red accents
+   Dark:  navy surfaces / white text / red accents
+   ============================================================ */
+
+:root {
+  /* Brand primitives — never change */
+  --cd-red:          #EC1C24;
+  --cd-red-dark:     #c81019;
+  --cd-red-light:    #ff4a50;
+  --cd-navy:         #000F33;
+  --cd-navy-mid:     #001040;
+  --cd-navy-light:   #001a60;
+  --cd-gold:         #D4AF37;
+  --cd-gold-dim:     #b8972e;
+  --cd-white:        #ffffff;
+
+  /* Type */
+  --font-heading: "Space Grotesk", system-ui, sans-serif;
+  --font-body:    "Montserrat", system-ui, sans-serif;
+  --font-mono:    "SF Mono", "Fira Code", monospace;
+
+  /* Scale — 6 steps, use only these */
+  --fs-xs:    11px;
+  --fs-sm:    13px;
+  --fs-base:  15px;
+  --fs-md:    17px;
+  --fs-lg:    20px;
+  --fs-xl:    24px;
+  --fs-2xl:   30px;
+  --fs-3xl:   38px;
+
+  /* Line heights */
+  --lh-tight:  1.2;
+  --lh-snug:   1.35;
+  --lh-normal: 1.55;
+
+  /* Spacing — 8pt grid */
+  --sp-1:  4px;
+  --sp-2:  8px;
+  --sp-3:  12px;
+  --sp-4:  16px;
+  --sp-5:  20px;
+  --sp-6:  24px;
+  --sp-8:  32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+
+  /* Radius */
+  --r-sm:   6px;
+  --r-md:   12px;
+  --r-lg:   18px;
+  --r-xl:   24px;
+  --r-full: 9999px;
+
+  /* Deprecated aliases — kept for compatibility */
+  --radius-sm:   var(--r-sm);
+  --radius-md:   var(--r-md);
+  --radius-lg:   var(--r-lg);
+  --radius-xl:   var(--r-xl);
+  --radius-full: var(--r-full);
+  --spacing-xs:  var(--sp-1);
+  --spacing-sm:  var(--sp-2);
+  --spacing-md:  var(--sp-4);
+  --spacing-lg:  var(--sp-6);
+  --spacing-xl:  var(--sp-8);
+  --spacing-2xl: var(--sp-12);
+  --fs-2xl: 30px;
+}
+
+/* ============================================================
+   LIGHT THEME
+   ============================================================ */
+:root, [data-theme="light"] {
+  color-scheme: light;
+
+  /* Surfaces */
+  --bg:              #f5f5f7;
+  --surface:         #ffffff;
+  --surface-raised:  #ffffff;
+  --surface-sunken:  #efefef;
+  --divider:         rgba(0,0,0,0.08);
+
+  /* Text */
+  --t1:   #000F33;   /* primary — headings */
+  --t2:   #3a4060;   /* secondary — body */
+  --t3:   #7a82a0;   /* tertiary — metadata, hints */
+  --t-inv: #ffffff;  /* text on dark/brand surfaces */
+
+  /* Interactive */
+  --accent:       var(--cd-red);
+  --accent-dim:   rgba(236,28,36,0.08);
+  --accent-hover: var(--cd-red-dark);
+
+  /* Status */
+  --s-success:      #16a34a;
+  --s-success-bg:   #f0fdf4;
+  --s-warning:      #d97706;
+  --s-warning-bg:   #fffbeb;
+  --s-error:        #dc2626;
+  --s-error-bg:     #fef2f2;
+  --s-error-border: #fca5a5;
+  --s-info:         #2563eb;
+  --s-info-bg:      #eff6ff;
+  --s-purple:       #7c3aed;
+  --s-purple-bg:    #f5f3ff;
+  --s-neutral:      #64748b;
+  --s-neutral-bg:   #f8fafc;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.10);
+
+  /* Navigation */
+  --nav-bg:     #ffffff;
+  --nav-border: rgba(0,0,0,0.08);
+  --nav-active: var(--cd-red);
+  --nav-muted:  #94a3b8;
+
+  /* Hero banners */
+  --hero-bg:   var(--cd-navy);
+  --hero-text: #ffffff;
+  --hero-sub:  rgba(255,255,255,0.60);
+
+  /* Inputs */
+  --input-bg:      #ffffff;
+  --input-border:  rgba(0,0,0,0.14);
+  --input-focus:   var(--cd-red);
+  --input-text:    var(--t1);
+  --input-placeholder: var(--t3);
+
+  /* Buttons */
+  --btn-ghost-text:   var(--cd-red);
+  --btn-ghost-border: rgba(236,28,36,0.35);
+  --btn-ghost-hover:  var(--cd-red);
+
+  /* Amount/price color */
+  --price: var(--cd-red);
+
+  /* Icons on gold bg */
+  --icon-gold-bg: var(--cd-gold);
+  --icon-on-gold: var(--cd-navy);
+
+  /* Icon holder buttons — profile nav, stats */
+  --icon-holder-bg:    rgba(236,28,36,0.08);
+  --icon-holder-color: var(--accent);
+
+  /* ── Legacy aliases (keep pages compiling) ── */
+  --surface-bg:         var(--bg);
+  --surface-card:       var(--surface);
+  --surface-secondary:  var(--surface-sunken);
+  --surface-card-border:var(--divider);
+  --text-primary:       var(--t1);
+  --text-secondary:     var(--t2);
+  --heading-color:      var(--t1);
+  --link-color:         var(--accent);
+  --cd-gray-50:  #f8f9fa;
+  --cd-gray-100: #f1f3f5;
+  --cd-gray-200: #e9ecef;
+  --cd-gray-300: #dee2e6;
+  --cd-gray-400: #ced4da;
+  --cd-gray-500: #94a3b8;
+  --cd-gray-600: #64748b;
+  --cd-success:         var(--s-success);
+  --cd-success-surface: var(--s-success-bg);
+  --cd-success-border:  #bbf7d0;
+  --cd-warning:         var(--s-warning);
+  --cd-warning-surface: var(--s-warning-bg);
+  --cd-warning-border:  #fde68a;
+  --cd-error:           var(--s-error);
+  --cd-error-surface:   var(--s-error-bg);
+  --cd-error-border:    var(--s-error-border);
+  --cd-info:            var(--s-info);
+  --cd-info-surface:    var(--s-info-bg);
+  --cd-info-border:     #bfdbfe;
+  --cd-purple:          var(--s-purple);
+  --cd-purple-surface:  var(--s-purple-bg);
+  --cd-neutral-surface: var(--s-neutral-bg);
+  --cd-neutral-text:    var(--s-neutral);
+  --platform-icon-bg:   var(--cd-gold);
+  --tag-bg:             var(--surface-sunken);
+  --tag-text:           var(--t1);
+  --amount-color:       var(--cd-red);
+  --badge-pending-bg:   var(--s-warning-bg);
+  --badge-pending-text: var(--s-warning);
+  --btn-secondary-bg:     var(--cd-navy);
+  --btn-secondary-text:   #ffffff;
+  --btn-secondary-border: transparent;
+  --btn-hero-bg:     rgba(255,255,255,0.15);
+  --btn-hero-text:   var(--cd-gold);
+  --btn-hero-border: rgba(255,255,255,0.30);
+
+  /* ── Glassmorphism nav (RGB triplets for rgba() usage) ── */
+  --glass-base:   255,255,255;   /* white base for light glass */
+  --glass-border: 0,0,0;         /* dark border tint */
+  --glass-active: 236,28,36;     /* red active state */
+}
+
+/* ============================================================
+   DARK THEME — navy bg, white text, red accents
+   ============================================================ */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg:              var(--cd-navy);
+  --surface:         var(--cd-navy-mid);
+  --surface-raised:  var(--cd-navy-light);
+  --surface-sunken:  #000a24;
+  --divider:         rgba(255,255,255,0.10);
+
+  --t1:    #ffffff;
+  --t2:    rgba(255,255,255,0.70);
+  --t3:    rgba(255,255,255,0.45);
+  --t-inv: #ffffff;
+
+  --accent:       var(--cd-red-light);
+  --accent-dim:   rgba(236,28,36,0.15);
+  --accent-hover: var(--cd-red);
+
+  --s-success:      #4ade80;
+  --s-success-bg:   rgba(74,222,128,0.12);
+  --s-warning:      var(--cd-gold);
+  --s-warning-bg:   rgba(212,175,55,0.12);
+  --s-error:        var(--cd-red-light);
+  --s-error-bg:     rgba(236,28,36,0.15);
+  --s-error-border: rgba(236,28,36,0.35);
+  --s-info:         #93c5fd;
+  --s-info-bg:      rgba(147,197,253,0.12);
+  --s-purple:       #c4b5fd;
+  --s-purple-bg:    rgba(196,181,253,0.12);
+  --s-neutral:      rgba(255,255,255,0.55);
+  --s-neutral-bg:   rgba(255,255,255,0.07);
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.40);
+  --shadow-md: 0 4px 14px rgba(0,0,0,0.50);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.60);
+
+  --nav-bg:     var(--cd-navy);
+  --nav-border: rgba(255,255,255,0.08);
+  --nav-active: var(--cd-red-light);
+  --nav-muted:  rgba(255,255,255,0.40);
+
+  --hero-bg:   var(--cd-red);
+  --hero-text: #ffffff;
+  --hero-sub:  rgba(255,255,255,0.75);
+
+  --input-bg:          var(--cd-navy-mid);
+  --input-border:      rgba(255,255,255,0.18);
+  --input-focus:       var(--cd-red-light);
+  --input-text:        #ffffff;
+  --input-placeholder: rgba(255,255,255,0.35);
+
+  --btn-ghost-text:   var(--cd-red-light);
+  --btn-ghost-border: rgba(255,100,100,0.40);
+  --btn-ghost-hover:  var(--cd-red);
+
+  --price: var(--cd-gold);
+
+  --icon-gold-bg: var(--cd-gold);
+  --icon-on-gold: var(--cd-navy);
+
+  /* Icon holder buttons — white in dark mode for visibility */
+  --icon-holder-bg:    rgba(255,255,255,0.12);
+  --icon-holder-color: #ffffff;
+
+  /* Legacy aliases */
+  --surface-bg:         var(--bg);
+  --surface-card:       var(--surface);
+  --surface-secondary:  var(--surface-sunken);
+  --surface-card-border:var(--divider);
+  --text-primary:       var(--t1);
+  --text-secondary:     var(--t2);
+  --heading-color:      var(--t1);
+  --link-color:         var(--accent);
+  --cd-gray-50:  #000a24;
+  --cd-gray-100: var(--cd-navy-mid);
+  --cd-gray-200: var(--cd-navy-light);
+  --cd-gray-300: rgba(255,255,255,0.15);
+  --cd-gray-400: rgba(255,255,255,0.25);
+  --cd-gray-500: rgba(255,255,255,0.40);
+  --cd-gray-600: rgba(255,255,255,0.55);
+  --cd-success:         var(--s-success);
+  --cd-success-surface: var(--s-success-bg);
+  --cd-success-border:  rgba(74,222,128,0.30);
+  --cd-warning:         var(--s-warning);
+  --cd-warning-surface: var(--s-warning-bg);
+  --cd-warning-border:  rgba(212,175,55,0.30);
+  --cd-error:           var(--s-error);
+  --cd-error-surface:   var(--s-error-bg);
+  --cd-error-border:    var(--s-error-border);
+  --cd-info:            var(--s-info);
+  --cd-info-surface:    var(--s-info-bg);
+  --cd-info-border:     rgba(147,197,253,0.30);
+  --cd-purple:          var(--s-purple);
+  --cd-purple-surface:  var(--s-purple-bg);
+  --cd-neutral-surface: var(--s-neutral-bg);
+  --cd-neutral-text:    var(--s-neutral);
+  --platform-icon-bg:   var(--cd-gold);
+  --tag-bg:             rgba(255,255,255,0.07);
+  --tag-text:           rgba(255,255,255,0.85);
+  --amount-color:       var(--cd-gold);
+  --badge-pending-bg:   rgba(212,175,55,0.15);
+  --badge-pending-text: var(--cd-gold);
+  --btn-secondary-bg:     transparent;
+  --btn-secondary-text:   var(--cd-red-light);
+  --btn-secondary-border: var(--cd-red-light);
+  --btn-hero-bg:     rgba(255,255,255,0.15);
+  --btn-hero-text:   #ffffff;
+  --btn-hero-border: rgba(255,255,255,0.30);
+
+  /* ── Glassmorphism nav ── */
+  --glass-base:   0,15,51;
+  --glass-border: 255,255,255;
+  --glass-active: 255,74,80;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg:              var(--cd-navy);
+    --surface:         var(--cd-navy-mid);
+    --surface-raised:  var(--cd-navy-light);
+    --surface-sunken:  #000a24;
+    --divider:         rgba(255,255,255,0.10);
+    --t1:    #ffffff;
+    --t2:    rgba(255,255,255,0.70);
+    --t3:    rgba(255,255,255,0.45);
+    --t-inv: #ffffff;
+    --accent:       var(--cd-red-light);
+    --accent-dim:   rgba(236,28,36,0.15);
+    --accent-hover: var(--cd-red);
+    --s-success:      #4ade80;
+    --s-success-bg:   rgba(74,222,128,0.12);
+    --s-warning:      var(--cd-gold);
+    --s-warning-bg:   rgba(212,175,55,0.12);
+    --s-error:        var(--cd-red-light);
+    --s-error-bg:     rgba(236,28,36,0.15);
+    --s-error-border: rgba(236,28,36,0.35);
+    --s-info:         #93c5fd;
+    --s-info-bg:      rgba(147,197,253,0.12);
+    --s-purple:       #c4b5fd;
+    --s-purple-bg:    rgba(196,181,253,0.12);
+    --s-neutral:      rgba(255,255,255,0.55);
+    --s-neutral-bg:   rgba(255,255,255,0.07);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.40);
+    --shadow-md: 0 4px 14px rgba(0,0,0,0.50);
+    --shadow-lg: 0 8px 30px rgba(0,0,0,0.60);
+    --nav-bg:     var(--cd-navy);
+    --nav-border: rgba(255,255,255,0.08);
+    --nav-active: var(--cd-red-light);
+    --nav-muted:  rgba(255,255,255,0.40);
+    --hero-bg:   var(--cd-red);
+    --hero-text: #ffffff;
+    --hero-sub:  rgba(255,255,255,0.75);
+    --input-bg:          var(--cd-navy-mid);
+    --input-border:      rgba(255,255,255,0.18);
+    --input-focus:       var(--cd-red-light);
+    --input-text:        #ffffff;
+    --input-placeholder: rgba(255,255,255,0.35);
+    --btn-ghost-text:   var(--cd-red-light);
+    --btn-ghost-border: rgba(255,100,100,0.40);
+    --price: var(--cd-gold);
+    --icon-gold-bg: var(--cd-gold);
+    --icon-on-gold: var(--cd-navy);
+    --icon-holder-bg:    rgba(255,255,255,0.12);
+    --icon-holder-color: #ffffff;
+    --surface-bg:         var(--bg);
+    --surface-card:       var(--surface);
+    --surface-secondary:  var(--surface-sunken);
+    --surface-card-border:var(--divider);
+    --text-primary:       var(--t1);
+    --text-secondary:     var(--t2);
+    --heading-color:      var(--t1);
+    --link-color:         var(--accent);
+    --cd-gray-100: var(--cd-navy-mid);
+    --cd-gray-200: var(--cd-navy-light);
+    --cd-gray-300: rgba(255,255,255,0.15);
+    --cd-gray-500: rgba(255,255,255,0.40);
+    --cd-success:         var(--s-success);
+    --cd-success-surface: var(--s-success-bg);
+    --cd-error:           var(--s-error);
+    --cd-error-surface:   var(--s-error-bg);
+    --cd-error-border:    var(--s-error-border);
+    --cd-warning:         var(--s-warning);
+    --cd-warning-surface: var(--s-warning-bg);
+    --cd-info:            var(--s-info);
+    --cd-info-surface:    var(--s-info-bg);
+    --cd-purple:          var(--s-purple);
+    --cd-purple-surface:  var(--s-purple-bg);
+    --cd-neutral-surface: var(--s-neutral-bg);
+    --cd-neutral-text:    var(--s-neutral);
+    --platform-icon-bg:   var(--cd-gold);
+    --amount-color:       var(--cd-gold);
+    --btn-secondary-bg:     transparent;
+    --btn-secondary-text:   var(--cd-red-light);
+    --btn-secondary-border: var(--cd-red-light);
+    --btn-hero-bg:     rgba(255,255,255,0.15);
+    --btn-hero-text:   #ffffff;
+    --btn-hero-border: rgba(255,255,255,0.30);
+    --glass-base:   0,15,51;
+    --glass-border: 255,255,255;
+    --glass-active: 255,74,80;
+  }
+}
+
+/* ============================================================
+   Reset + Base
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  height: 100%;
+  /* Telegram smooth scroll */
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family:            var(--font-body);
+  font-size:              var(--fs-base);
+  line-height:            var(--lh-normal);
+  color:                  var(--t1);
+  background:             var(--bg);
+  min-height:             100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior:    none;
+}
+
+#root { min-height: 100vh; display: flex; flex-direction: column; width: 100%; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height:  var(--lh-tight);
+  color:        var(--t1);
+}
+
+a { color: var(--accent); text-decoration: none; }
+img { max-width: 100%; display: block; }
+
+button {
+  font-family:  var(--font-body);
+  cursor:       pointer;
+  border:       none;
+  background:   none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+input, textarea, select {
+  font-family:  var(--font-body);
+  font-size:    var(--fs-base);
+  color:        var(--input-text);
+  background:   var(--input-bg);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--input-placeholder);
+}
+
+/* Focus */
+:focus-visible {
+  outline:        2.5px solid var(--accent);
+  outline-offset: 2px;
+  border-radius:  var(--r-sm);
+}
+
+/* ── Layout utilities ── */
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* Page shell — padded content area with top-nav clearance */
+.page {
+  flex: 1;
+  padding:     var(--sp-4);
+  padding-top: calc(var(--sp-4) + 60px);   /* top nav height */
+  padding-bottom: var(--sp-8);
+  max-width:      480px;
+  margin:         0 auto;
+  width:          100%;
+}
+
+/* Card — avoid using this wholesale; prefer section-specific styles */
+.card {
+  background:    var(--surface);
+  border-radius: var(--r-lg);
+  padding:       var(--sp-4);
+  border:        1px solid var(--divider);
+}
+
+/* Bottom nav centering */
+.bottom-nav-inner {
+  max-width: 480px;
+  margin:    0 auto;
+  width:     100%;
+  display:   flex;
+  height:    60px;
+}
+
+/* Divider line */
+.divider-line { height: 1px; background: var(--divider); }
+
+/* ── Animations ── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+
+.animate-fade-in   { animation: fadeIn    0.22s ease-out both; }
+.animate-fade-in-up { animation: fadeInUp 0.25s ease-out both; }
+.animate-spin      { animation: spin      0.8s  linear infinite; }
+.animate-slide-up  { animation: slideUp   0.28s cubic-bezier(0.16,1,0.3,1) both; }
+.animate-pulse     { animation: pulse     1.5s  ease-in-out infinite; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar       { width: 3px; height: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--divider); border-radius: 3px; }
+
+/* ── Textarea ── */
+.textarea-autogrow {
+  field-sizing: content;
+  min-height:   88px;
+  max-height:   200px;
+  overflow-y:   auto;
+  resize:       none;
+}
+
+/* ── Scroll fade (platform chips) ── */
+.scroll-fade-right {
+  -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
+  mask-image:         linear-gradient(to right, black 80%, transparent 100%);
+}
+
+/* ── Section header row ── */
+.section-header {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  margin-bottom:   var(--sp-3);
+}
+
+/* ── Info row (label + value pair) ── */
+.info-row {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     flex-start;
+  gap:             var(--sp-3);
+  padding:         10px 0;
+  border-bottom:   1px solid var(--divider);
+}
+.info-row:last-child { border-bottom: none; }
+
+/* ── Skeleton loader ── */
+.skeleton {
+  background: linear-gradient(90deg, var(--surface-sunken) 25%, var(--surface) 50%, var(--surface-sunken) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: var(--r-md);
+}
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
