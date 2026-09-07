@@ -5,10 +5,14 @@ import { api } from "@/lib/api";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Spinner } from "@/components/ui/Spinner";
 import { ClipboardIcon, WalletIcon, BellIcon, HelpCircleIcon, StarIcon, CheckIcon, ChevronRightIcon } from "@/components/ui/Icon";
+import { useTranslation } from "react-i18next";
+import { setLanguage } from "@/lib/i18n";
 
 export function ProfilePage() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language.startsWith("am") ? "am" : "en";
 
   const { data: stats, isLoading } = useQuery({
     queryKey: ["profile-stats"],
@@ -115,8 +119,28 @@ export function ProfilePage() {
         ))}
       </div>
 
+      {/* Language toggle */}
+      <div style={{ marginTop: "var(--sp-5)", display: "flex", alignItems: "center", justifyContent: "center", gap: "var(--sp-3)" }}>
+        <p style={{ fontSize: "var(--fs-xs)", color: "var(--t3)" }}>Language / ቋንቋ:</p>
+        {(["en", "am"] as const).map(lang => (
+          <button
+            key={lang}
+            type="button"
+            onClick={() => setLanguage(lang)}
+            style={{
+              padding: "5px 14px", borderRadius: 20, fontSize: 12, fontWeight: 700, cursor: "pointer",
+              background: currentLang === lang ? "var(--accent)" : "var(--surface)",
+              color:      currentLang === lang ? "#fff" : "var(--t2)",
+              border:     `1.5px solid ${currentLang === lang ? "var(--accent)" : "var(--divider)"}`,
+            }}
+          >
+            {lang === "en" ? "English" : "አማርኛ"}
+          </button>
+        ))}
+      </div>
+
       {/* Version */}
-      <p style={{ textAlign: "center", fontSize: "var(--fs-xs)", color: "var(--t3)", marginTop: "var(--sp-8)" }}>
+      <p style={{ textAlign: "center", fontSize: "var(--fs-xs)", color: "var(--t3)", marginTop: "var(--sp-4)" }}>
         Connect Digitals v1.0
       </p>
     </div>

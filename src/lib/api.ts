@@ -1,5 +1,6 @@
 /**
  * Axios API client — auto-attaches the JWT access token from the auth store.
+ * On 401, automatically refreshes the Supabase session once and retries.
  */
 import axios from "axios";
 
@@ -13,6 +14,32 @@ api.interceptors.request.use((config) => {
   if (token) config.headers["Authorization"] = `Bearer ${token}`;
   return config;
 });
+
+// On 401, try to refresh the session once then retry the original request.
+// Prevents silent failures when the Supabase token expires mid-session.
+api.interceptors.response.use(
+  (response) => response,
+  async (error: unknown) => {
+    const axiosError = error as import("axios").AxiosError & { _retry?: boolean };
+    const config = axiosError.config as (import("axios").InternalAxiosRequestConfig & { _retry?: boolean }) | undefined;
+    if (axiosError.response?.status === 401 && !config?.["_retry"]) {
+      if (config) config["_retry"] = true;
+      try {
+        const { useAuthStore } = await import("@/store/auth.store");
+        await useAuthStore.getState().refreshSession();
+        const newToken = localStorage.getItem("cd_access_token");
+        if (newToken && config) {
+          config.headers["Authorization"] = `Bearer ${newToken}`;
+          return api(config);
+        }
+      } catch {
+        const { useAuthStore } = await import("@/store/auth.store");
+        useAuthStore.getState().clear();
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 /** Display ETB cents as "X.XX" */
 export function etbDisplay(cents: number): string {

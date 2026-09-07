@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Connect Digitals — Telegram Mini App
 
 Customer-facing Telegram Mini App for the Connect Digitals Promotion Platform.
@@ -54,3 +55,6 @@ npm run dev
 | `npm run dev` | Dev server on port 5173 |
 | `npm run build` | Production build to `dist/` |
 | `npm run typecheck` | TypeScript check only |
+=======
+# Connect-Digitals-Mini-App
+>>>>>>> b26ffb382eef29430dd2ff2b6abc2424fd879cda

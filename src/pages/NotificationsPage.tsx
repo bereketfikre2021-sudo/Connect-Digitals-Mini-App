@@ -1,67 +1,156 @@
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { api, timeAgo } from "@/lib/api";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { BellIcon, CreditCardIcon, CheckIcon, XIcon, ZapIcon, BarChartIcon, ClipboardIcon } from "@/components/ui/Icon";
+import { Spinner } from "@/components/ui/Spinner";
+import { ErrorMessage } from "@/components/ui/ErrorMessage";
+import {
+  BellIcon, CreditCardIcon, CheckIcon, XIcon, ZapIcon,
+  BarChartIcon, ClipboardIcon, CoinsIcon, WalletIcon,
+} from "@/components/ui/Icon";
 
-const EVENTS = [
-  { Icon: ClipboardIcon, event: "Order Placed",      desc: "When you place a new order" },
-  { Icon: CreditCardIcon,event: "Payment Submitted", desc: "When your payment proof is received" },
-  { Icon: CheckIcon,     event: "Payment Approved",  desc: "When admin confirms your payment" },
-  { Icon: XIcon,         event: "Payment Rejected",  desc: "If there's an issue with your payment" },
-  { Icon: ZapIcon,       event: "Fulfillment Started",desc: "When work begins on your order" },
-  { Icon: CheckIcon,     event: "Order Completed",   desc: "When your promotion is delivered" },
-  { Icon: BarChartIcon,  event: "Report Available",  desc: "When your campaign report is ready" },
-];
+interface Notification {
+  id: string; event: string; title: string; message: string;
+  readAt: string | null; createdAt: string;
+}
+interface NotifData { notifications: Notification[]; total: number; unreadCount: number }
+
+const EVENT_ICONS: Record<string, typeof BellIcon> = {
+  ORDER_CREATED:       ClipboardIcon,
+  PAYMENT_SUBMITTED:   CreditCardIcon,
+  PAYMENT_APPROVED:    CheckIcon,
+  PAYMENT_REJECTED:    XIcon,
+  ORDER_PROCESSING:    ZapIcon,
+  FULFILLMENT_STARTED: ZapIcon,
+  ORDER_COMPLETED:     CheckIcon,
+  ORDER_CANCELLED:     XIcon,
+  REFUND_ISSUED:       CoinsIcon,
+  REPORT_AVAILABLE:    BarChartIcon,
+  WALLET_CREDITED:     WalletIcon,
+};
+
+const EVENT_COLORS: Record<string, string> = {
+  PAYMENT_APPROVED:  "var(--s-success)",
+  ORDER_COMPLETED:   "var(--s-success)",
+  WALLET_CREDITED:   "var(--s-success)",
+  PAYMENT_REJECTED:  "var(--s-error)",
+  ORDER_CANCELLED:   "var(--s-error)",
+  REPORT_AVAILABLE:  "var(--s-info)",
+  REFUND_ISSUED:     "var(--s-warning)",
+};
 
 export function NotificationsPage() {
+  const qc = useQueryClient();
+
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["notifications"],
+    queryFn: () => api.get<{ success: boolean; data: NotifData }>("/notifications").then(r => r.data.data),
+    refetchInterval: 30_000,
+  });
+
+  const markAllRead = useMutation({
+    mutationFn: () => api.patch("/notifications/read-all"),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["notifications"] }),
+  });
+
+  const markOneRead = useMutation({
+    mutationFn: (id: string) => api.patch(`/notifications/${id}/read`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["notifications"] }),
+  });
+
   return (
     <div className="page animate-fade-in">
-      <PageHeader title="Notifications" />
+      <PageHeader
+        title="Notifications"
+        right={
+          data?.unreadCount && data.unreadCount > 0 ? (
+            <button
+              type="button"
+              onClick={() => markAllRead.mutate()}
+              style={{ fontSize: "var(--fs-xs)", fontWeight: 700, color: "var(--accent)", background: "none", border: "none", cursor: "pointer", padding: "4px 8px" }}
+            >
+              Mark all read
+            </button>
+          ) : undefined
+        }
+      />
 
-      {/* Hero */}
-      <div style={{ background: "var(--hero-bg)", borderRadius: "var(--r-xl)", padding: "var(--sp-5)", marginBottom: "var(--sp-5)" }}>
-        <div style={{ width: 48, height: 48, borderRadius: "var(--r-md)", background: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "var(--sp-3)" }}>
-          <BellIcon size={24} color="#fff" aria-hidden="true" />
+      {/* Unread count badge */}
+      {data && data.unreadCount > 0 && (
+        <div style={{ marginBottom: "var(--sp-4)", padding: "var(--sp-3) var(--sp-4)", background: "var(--accent-dim)", border: "1px solid rgba(236,28,36,0.15)", borderRadius: "var(--r-md)" }}>
+          <p style={{ fontSize: "var(--fs-sm)", color: "var(--accent)", fontWeight: 700 }}>
+            {data.unreadCount} unread notification{data.unreadCount > 1 ? "s" : ""}
+          </p>
         </div>
-        <h2 style={{ fontFamily: "var(--font-heading)", fontSize: "var(--fs-lg)", fontWeight: 700, color: "#fff", marginBottom: 6 }}>
-          Telegram Notifications
-        </h2>
-        <p style={{ fontSize: "var(--fs-sm)", color: "rgba(255,255,255,0.70)", lineHeight: "var(--lh-normal)" }}>
-          All notifications are sent directly via the Connect Digitals Telegram Bot. Make sure you haven't muted the bot.
-        </p>
-      </div>
+      )}
 
-      {/* Events */}
-      <p style={{ fontSize: "var(--fs-xs)", fontFamily: "var(--font-heading)", fontWeight: 700, color: "var(--t3)", textTransform: "uppercase", letterSpacing: 0.6, marginBottom: "var(--sp-3)" }}>
-        You'll be notified for
-      </p>
+      {isLoading && <Spinner />}
+      {error && <ErrorMessage message="Failed to load notifications" onRetry={() => refetch()} />}
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "var(--sp-2)", marginBottom: "var(--sp-5)" }}>
-        {EVENTS.map(n => (
-          <div
-            key={n.event}
-            style={{
-              background:   "var(--surface)",
-              border:       "1px solid var(--divider)",
-              borderRadius: "var(--r-lg)",
-              padding:      "var(--sp-4)",
-              display:      "flex",
-              alignItems:   "center",
-              gap:          "var(--sp-4)",
-            }}
-          >
-            <div style={{ width: 40, height: 40, borderRadius: "var(--r-md)", background: "var(--accent-dim)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <n.Icon size={18} color="var(--accent)" aria-hidden="true" />
-            </div>
-            <div>
-              <p style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: "var(--fs-base)", color: "var(--t1)", marginBottom: 2 }}>{n.event}</p>
-              <p style={{ fontSize: "var(--fs-sm)", color: "var(--t3)" }}>{n.desc}</p>
-            </div>
+      {data?.notifications.length === 0 && !isLoading && (
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "var(--sp-12) var(--sp-4)", gap: "var(--sp-3)" }}>
+          <div style={{ width: 52, height: 52, borderRadius: "var(--r-lg)", background: "var(--surface)", border: "1px solid var(--divider)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <BellIcon size={24} color="var(--t3)" aria-hidden="true" />
           </div>
-        ))}
-      </div>
+          <p style={{ fontSize: "var(--fs-sm)", color: "var(--t3)" }}>No notifications yet.</p>
+          <p style={{ fontSize: "var(--fs-xs)", color: "var(--t3)" }}>You'll be notified here and via Telegram for all order updates.</p>
+        </div>
+      )}
 
-      <div style={{ padding: "var(--sp-4)", background: "var(--surface)", border: "1px solid var(--divider)", borderRadius: "var(--r-md)", fontSize: "var(--fs-sm)", color: "var(--t3)", lineHeight: "var(--lh-normal)" }}>
-        In-app notification history will be available soon. Check your Telegram chat with the bot for all updates.
-      </div>
+      {data && data.notifications.length > 0 && (
+        <div style={{ display: "flex", flexDirection: "column", gap: "var(--sp-2)" }}>
+          {data.notifications.map(n => {
+            const Icon  = EVENT_ICONS[n.event] ?? BellIcon;
+            const color = EVENT_COLORS[n.event] ?? "var(--t3)";
+            const unread = n.readAt === null;
+
+            return (
+              <button
+                key={n.id}
+                type="button"
+                onClick={() => { if (unread) markOneRead.mutate(n.id); }}
+                aria-label={unread ? `Mark "${n.title}" as read` : n.title}
+                style={{
+                  width: "100%",
+                  background:   unread ? "var(--accent-dim)" : "var(--surface)",
+                  border:       `1px solid ${unread ? "rgba(236,28,36,0.18)" : "var(--divider)"}`,
+                  borderRadius: "var(--r-lg)",
+                  padding:      "var(--sp-4)",
+                  textAlign:    "left",
+                  cursor:       unread ? "pointer" : "default",
+                  display:      "flex",
+                  alignItems:   "flex-start",
+                  gap:          "var(--sp-3)",
+                }}
+              >
+                {/* Icon */}
+                <div style={{ width: 40, height: 40, borderRadius: "var(--r-md)", background: "var(--surface)", border: "1px solid var(--divider)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <Icon size={18} color={color} aria-hidden="true" />
+                </div>
+
+                {/* Content */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "var(--sp-2)", marginBottom: 3 }}>
+                    <p style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: "var(--fs-sm)", color: "var(--t1)", lineHeight: "var(--lh-tight)" }}>
+                      {n.title}
+                    </p>
+                    <span style={{ fontSize: "var(--fs-xs)", color: "var(--t3)", flexShrink: 0, marginTop: 1 }}>
+                      {timeAgo(n.createdAt)}
+                    </span>
+                  </div>
+                  <p style={{ fontSize: "var(--fs-xs)", color: "var(--t2)", lineHeight: "var(--lh-normal)", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as never }}>
+                    {n.message}
+                  </p>
+                </div>
+
+                {/* Unread dot */}
+                {unread && (
+                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--accent)", flexShrink: 0, marginTop: 4 }} aria-hidden="true" />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

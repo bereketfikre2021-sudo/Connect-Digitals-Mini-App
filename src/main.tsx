@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { App } from "./App";
 import "./index.css";
+import "./lib/i18n"; // initialise i18next before first render
 
 // ── Apply Telegram colour-scheme to <html> before first render ────────────────
 // Telegram WebApp sets `window.Telegram.WebApp.colorScheme` to "dark" or "light".

@@ -292,6 +292,17 @@ export function OrderDetailPage() {
               {isRejected ? "Re-submit Payment" : "Complete Payment"}
             </Button>
           )}
+          {/* Re-order — for completed/cancelled orders */}
+          {(order.orderStatus === "COMPLETED" || order.orderStatus === "CANCELLED") && (
+            <Button
+              variant="subtle"
+              size="md"
+              fullWidth
+              onClick={() => navigate(`/services/${order.service.slug}`)}
+            >
+              Re-order this service
+            </Button>
+          )}
           {canCancel && (
             <Button
               variant="ghost"

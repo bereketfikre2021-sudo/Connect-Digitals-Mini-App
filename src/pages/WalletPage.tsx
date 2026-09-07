@@ -12,6 +12,7 @@ interface TxData {
   transactions: Array<{ id: string; type: string; amountETB: number; balanceBefore: number; balanceAfter: number; description: string | null; reference: string | null; createdAt: string }>;
   total: number;
 }
+interface PendingDeposit { id: string; amountETB: number; createdAt: string }
 
 const TX_ICONS: Record<string, typeof TrendUpIcon> = { DEPOSIT: TrendUpIcon, REFUND: RefreshIcon, REWARD: CoinsIcon, ORDER_PAYMENT: TrendDownIcon, ADJUSTMENT: CoinsIcon };
 const TX_CREDIT = new Set(["DEPOSIT", "REFUND", "REWARD"]);
@@ -27,6 +28,13 @@ export function WalletPage() {
   const { data: txData, isLoading: txLoading, error: txError, refetch: refetchTx } = useQuery({
     queryKey: ["wallet-transactions"],
     queryFn: () => api.get<{ success: boolean; data: TxData }>("/wallet/transactions").then(r => r.data.data),
+  });
+
+  // Pending deposits — payments with orderId=null still UNDER_REVIEW
+  const { data: pendingDeposits } = useQuery({
+    queryKey: ["pending-deposits"],
+    queryFn: () => api.get<{ success: boolean; data: PendingDeposit[] }>("/payments?status=UNDER_REVIEW&type=deposit").then(r => r.data.data),
+    refetchInterval: 30_000,
   });
 
   return (
@@ -80,6 +88,32 @@ export function WalletPage() {
           <PlusIcon size={14} color="var(--btn-hero-text)" /> Deposit Funds
         </button>
       </div>
+
+      {/* Pending deposits banner */}
+      {pendingDeposits && pendingDeposits.length > 0 && (
+        <div style={{
+          marginBottom: "var(--sp-4)",
+          padding: "var(--sp-3) var(--sp-4)",
+          background: "var(--s-warning-bg)",
+          border: "1px solid var(--s-warning)",
+          borderRadius: "var(--r-md)",
+          display: "flex",
+          alignItems: "flex-start",
+          gap: "var(--sp-2)",
+        }}>
+          <CoinsIcon size={15} color="var(--s-warning)" style={{ flexShrink: 0, marginTop: 1 }} aria-hidden="true" />
+          <div>
+            <p style={{ fontSize: "var(--fs-sm)", fontWeight: 700, color: "var(--s-warning)", marginBottom: 2 }}>
+              Pending Deposit{pendingDeposits.length > 1 ? "s" : ""}
+            </p>
+            {pendingDeposits.map(d => (
+              <p key={d.id} style={{ fontSize: "var(--fs-xs)", color: "var(--s-warning)" }}>
+                {etbDisplay(d.amountETB)} ETB — under review, will be credited once approved
+              </p>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Info note */}
       <div style={{ display: "flex", gap: "var(--sp-2)", alignItems: "flex-start", padding: "var(--sp-3) var(--sp-4)", background: "var(--surface)", border: "1px solid var(--divider)", borderRadius: "var(--r-md)", marginBottom: "var(--sp-5)" }}>

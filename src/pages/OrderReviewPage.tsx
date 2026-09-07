@@ -7,9 +7,10 @@ import { api, etbDisplay } from "@/lib/api";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/Button";
 import { hapticSuccess, hapticError } from "@/lib/telegram";
-import { LinkIcon, CheckIcon, XIcon } from "@/components/ui/Icon";
+import { LinkIcon, CheckIcon, XIcon, TagIcon } from "@/components/ui/Icon";
 
 interface CreateOrderResponse { success: boolean; data: { id: string; orderNumber: string; totalAmountETB: number } }
+interface PromoResult { valid: boolean; reason?: string; promoId?: string; discountPercent?: number; discountETB?: number; finalAmountETB?: number }
 
 function ConfirmSheet({ service, pkg, targetUrl, notes, onConfirm, onCancel, isPending }: {
   service: { name: string; platform: { name: string } };
@@ -89,15 +90,40 @@ export function OrderReviewPage() {
   const { service, selectedPackage, targetUrl, notes, reset } = useOrderStore();
   const { refreshMe } = useAuthStore();
   const [showConfirmSheet, setShowConfirmSheet] = useState(false);
+  const [promoCode, setPromoCode] = useState("");
+  const [promoResult, setPromoResult] = useState<PromoResult | null>(null);
+  const [promoChecking, setPromoChecking] = useState(false);
 
   useEffect(() => { if (!service || !selectedPackage) navigate("/services", { replace: true }); }, [service, selectedPackage, navigate]);
 
+  const finalPrice = promoResult?.valid && promoResult.finalAmountETB != null
+    ? promoResult.finalAmountETB
+    : (selectedPackage?.priceETB ?? 0);
+
+  const handlePromoApply = async () => {
+    if (!promoCode.trim() || !selectedPackage) return;
+    setPromoChecking(true);
+    setPromoResult(null);
+    try {
+      const res = await api.post<{ success: boolean; data: PromoResult }>("/promo-codes/validate", {
+        code: promoCode.trim().toUpperCase(),
+        amountETB: selectedPackage.priceETB,
+      });
+      setPromoResult(res.data.data);
+    } catch {
+      setPromoResult({ valid: false, reason: "Failed to validate code. Try again." });
+    } finally {
+      setPromoChecking(false);
+    }
+  };
+
   const createOrder = useMutation({
     mutationFn: () => api.post<CreateOrderResponse>("/orders", {
-      packageId: selectedPackage!.id,
+      packageId:   selectedPackage!.id,
       targetUrl,
-      targetType: service!.targetType,
-      notes: notes || undefined,
+      targetType:  service!.targetType,
+      notes:       notes || undefined,
+      promoCode:   promoResult?.valid ? promoCode.trim().toUpperCase() : undefined,
     }).then(r => r.data),
     onSuccess: async data => {
       hapticSuccess();
@@ -151,23 +177,45 @@ export function OrderReviewPage() {
           )}
         </div>
 
-        {/* Total */}
-        <div style={{
-          background:    "var(--surface)",
-          border:        "1px solid var(--divider)",
-          borderRadius:  "var(--r-lg)",
-          padding:       "var(--sp-4)",
-          marginBottom:  "var(--sp-5)",
-          display:       "flex",
-          justifyContent:"space-between",
-          alignItems:    "center",
-        }}>
+        {/* Promo code */}
+        <div style={{ background: "var(--surface)", border: "1px solid var(--divider)", borderRadius: "var(--r-lg)", padding: "var(--sp-4)", marginBottom: "var(--sp-3)" }}>
+          <p style={{ fontFamily: "var(--font-heading)", fontSize: "var(--fs-sm)", fontWeight: 700, color: "var(--t1)", marginBottom: "var(--sp-2)", display: "flex", alignItems: "center", gap: 6 }}>
+            <TagIcon size={14} color="var(--accent)" aria-hidden="true" /> Promo Code
+          </p>
+          <div style={{ display: "flex", gap: "var(--sp-2)" }}>
+            <input
+              type="text"
+              value={promoCode}
+              onChange={e => { setPromoCode(e.target.value.toUpperCase()); setPromoResult(null); }}
+              placeholder="Enter code (optional)"
+              style={{ flex: 1, padding: "10px 12px", border: `1.5px solid ${promoResult?.valid ? "var(--s-success)" : "var(--input-border)"}`, borderRadius: "var(--r-md)", fontSize: "var(--fs-sm)", background: "var(--input-bg)", color: "var(--input-text)", outline: "none", fontFamily: "var(--font-mono)", textTransform: "uppercase" }}
+            />
+            <Button variant="subtle" size="md" loading={promoChecking} onClick={handlePromoApply} disabled={!promoCode.trim()}>
+              Apply
+            </Button>
+          </div>
+          {promoResult && (
+            <p style={{ marginTop: 6, fontSize: "var(--fs-xs)", fontWeight: 600, color: promoResult.valid ? "var(--s-success)" : "var(--s-error)" }}>
+              {promoResult.valid
+                ? `✓ ${promoResult.discountPercent}% off — saving ${etbDisplay(promoResult.discountETB!)} ETB`
+                : promoResult.reason}
+            </p>
+          )}
+        </div>
+
+        {/* Total — shows discounted amount if promo applied */}
+        <div style={{ background: "var(--surface)", border: "1px solid var(--divider)", borderRadius: "var(--r-lg)", padding: "var(--sp-4)", marginBottom: "var(--sp-5)", display: "flex", justifyContent:"space-between", alignItems: "center" }}>
           <div>
             <p style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: "var(--fs-base)", color: "var(--t1)" }}>Total</p>
+            {promoResult?.valid && (
+              <p style={{ fontSize: "var(--fs-xs)", color: "var(--t3)", textDecoration: "line-through", marginTop: 2 }}>
+                {etbDisplay(selectedPackage.priceETB)} ETB
+              </p>
+            )}
             <p style={{ fontSize: "var(--fs-xs)", color: "var(--t3)", marginTop: 2 }}>Payment on next step</p>
           </div>
           <p style={{ fontFamily: "var(--font-heading)", fontWeight: 700, fontSize: "var(--fs-2xl)", color: "var(--price)" }}>
-            {etbDisplay(selectedPackage.priceETB)} <span style={{ fontSize: "var(--fs-md)" }}>ETB</span>
+            {etbDisplay(finalPrice)} <span style={{ fontSize: "var(--fs-md)" }}>ETB</span>
           </p>
         </div>
 
@@ -196,3 +244,5 @@ export function OrderReviewPage() {
     </>
   );
 }
+
+// Total card is rendered inline in the JSX above — this export keeps the file valid

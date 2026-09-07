@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { WebApp } from "@/lib/telegram";
+import { getStartParam } from "@/lib/telegram";
 import { useAuthStore } from "@/store/auth.store";
 import { FullPageSpinner } from "@/components/ui/Spinner";
 import { BottomNav } from "@/components/layout/BottomNav";
@@ -28,11 +29,28 @@ import { ReportPage } from "@/pages/ReportPage";
 
 export function App() {
   const { authenticate, isLoading, isAuthenticated, error } = useAuthStore();
+  const navigate = useNavigate();
 
   useEffect(() => {
     try { WebApp.ready(); WebApp.expand(); } catch { /* noop in dev */ }
     authenticate();
   }, [authenticate]);
+
+  // Handle deep link after auth completes
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const param = getStartParam();
+    if (!param) return;
+    if (param.startsWith("service_")) {
+      navigate(`/services/${param.replace("service_", "")}`, { replace: true });
+    } else if (param.startsWith("order_")) {
+      navigate(`/orders/${param.replace("order_", "")}`, { replace: true });
+    } else if (param === "wallet") {
+      navigate("/wallet", { replace: true });
+    } else if (param === "deposit") {
+      navigate("/wallet/deposit", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   // ── DEV-only theme toggle ─────────────────────────────────────────────────
   const [devTheme, setDevTheme] = useState<"light" | "dark">(() => {
