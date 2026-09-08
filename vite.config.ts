@@ -14,6 +14,16 @@ export default defineConfig({
       "/api": {
         target: "http://localhost:3000",
         changeOrigin: true,
+        // Required for multipart/form-data uploads (payment screenshots).
+        // Increase timeouts and disable request body buffering so binary
+        // payloads pass through the proxy stream without being reset.
+        proxyTimeout: 60000,
+        timeout: 60000,
+        configure: (proxy) => {
+          proxy.on("error", (err) => {
+            console.error("[vite-proxy] error:", err.message);
+          });
+        },
       },
     },
   },

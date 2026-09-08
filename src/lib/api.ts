@@ -35,8 +35,10 @@ api.interceptors.response.use(
       } catch {
         const { useAuthStore } = await import("@/store/auth.store");
         useAuthStore.getState().clear();
+        // Fall through — reject with the original error so callers see it
       }
     }
+    // Always reject so React Query onError handlers fire
     return Promise.reject(error);
   }
 );

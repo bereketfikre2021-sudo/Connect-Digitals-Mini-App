@@ -48,7 +48,7 @@ export function OrderNewPage() {
   const onSubmit = (data: FormValues) => {
     setTargetUrl(data.targetUrl ?? "");
     setNotes(data.notes ?? "");
-    navigate("/order/review");
+    navigate("/order/checkout");
   };
 
   if (!service || !selectedPackage) return null;

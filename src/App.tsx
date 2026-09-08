@@ -11,6 +11,7 @@ import { LockIcon, AlertIcon } from "@/components/ui/Icon";
 import { HomePage } from "@/pages/HomePage";
 import { ServicesPage } from "@/pages/ServicesPage";
 import { ServiceDetailPage } from "@/pages/ServiceDetailPage";
+import { OrderCheckoutPage } from "@/pages/OrderCheckoutPage";
 import { OrderNewPage } from "@/pages/OrderNewPage";
 import { OrderReviewPage } from "@/pages/OrderReviewPage";
 import { OrdersPage } from "@/pages/OrdersPage";
@@ -88,6 +89,7 @@ export function App() {
         <Route path="/services"                      element={<ServicesPage />} />
         <Route path="/services/:slug"                element={<ServiceDetailPage />} />
         <Route path="/order/new"                     element={<OrderNewPage />} />
+        <Route path="/order/checkout"                element={<OrderCheckoutPage />} />
         <Route path="/order/review"                  element={<OrderReviewPage />} />
         <Route path="/orders"                        element={<OrdersPage />} />
         <Route path="/orders/:id"                    element={<OrderDetailPage />} />

@@ -127,7 +127,9 @@ export function OrderReviewPage() {
     }).then(r => r.data),
     onSuccess: async data => {
       hapticSuccess();
-      await refreshMe();
+      // Fire-and-forget — a wallet refresh failure must never block navigation
+      // to the order detail page after a successful order creation.
+      refreshMe().catch(() => { /* non-critical */ });
       reset();
       navigate(`/orders/${data.data.id}`, { replace: true });
     },
