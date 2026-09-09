@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { WebApp } from "@/lib/telegram";
 import { getStartParam } from "@/lib/telegram";
@@ -7,26 +7,26 @@ import { FullPageSpinner } from "@/components/ui/Spinner";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { LockIcon, AlertIcon } from "@/components/ui/Icon";
 
-// Pages
-import { HomePage } from "@/pages/HomePage";
-import { ServicesPage } from "@/pages/ServicesPage";
-import { ServiceDetailPage } from "@/pages/ServiceDetailPage";
-import { OrderCheckoutPage } from "@/pages/OrderCheckoutPage";
-import { OrderNewPage } from "@/pages/OrderNewPage";
-import { OrderReviewPage } from "@/pages/OrderReviewPage";
-import { OrdersPage } from "@/pages/OrdersPage";
-import { OrderDetailPage } from "@/pages/OrderDetailPage";
-import { PaymentMethodSelectPage } from "@/pages/PaymentMethodSelectPage";
-import { PaymentInstructionsPage } from "@/pages/PaymentInstructionsPage";
-import { PaymentSubmitPage } from "@/pages/PaymentSubmitPage";
-import { WalletPayPage } from "@/pages/WalletPayPage";
-import { WalletPage } from "@/pages/WalletPage";
-import { WalletDepositPage } from "@/pages/WalletDepositPage";
-import { ProfilePage } from "@/pages/ProfilePage";
-import { NotificationsPage } from "@/pages/NotificationsPage";
-import { SupportPage } from "@/pages/SupportPage";
-import { NotFoundPage } from "@/pages/NotFoundPage";
-import { ReportPage } from "@/pages/ReportPage";
+// ── Lazy-loaded pages — each gets its own chunk, parsed only when visited ─────
+const HomePage                = lazy(() => import("@/pages/HomePage").then(m => ({ default: m.HomePage })));
+const ServicesPage            = lazy(() => import("@/pages/ServicesPage").then(m => ({ default: m.ServicesPage })));
+const ServiceDetailPage       = lazy(() => import("@/pages/ServiceDetailPage").then(m => ({ default: m.ServiceDetailPage })));
+const OrderCheckoutPage       = lazy(() => import("@/pages/OrderCheckoutPage").then(m => ({ default: m.OrderCheckoutPage })));
+const OrderNewPage            = lazy(() => import("@/pages/OrderNewPage").then(m => ({ default: m.OrderNewPage })));
+const OrderReviewPage         = lazy(() => import("@/pages/OrderReviewPage").then(m => ({ default: m.OrderReviewPage })));
+const OrdersPage              = lazy(() => import("@/pages/OrdersPage").then(m => ({ default: m.OrdersPage })));
+const OrderDetailPage         = lazy(() => import("@/pages/OrderDetailPage").then(m => ({ default: m.OrderDetailPage })));
+const PaymentMethodSelectPage = lazy(() => import("@/pages/PaymentMethodSelectPage").then(m => ({ default: m.PaymentMethodSelectPage })));
+const PaymentInstructionsPage = lazy(() => import("@/pages/PaymentInstructionsPage").then(m => ({ default: m.PaymentInstructionsPage })));
+const PaymentSubmitPage       = lazy(() => import("@/pages/PaymentSubmitPage").then(m => ({ default: m.PaymentSubmitPage })));
+const WalletPayPage           = lazy(() => import("@/pages/WalletPayPage").then(m => ({ default: m.WalletPayPage })));
+const WalletPage              = lazy(() => import("@/pages/WalletPage").then(m => ({ default: m.WalletPage })));
+const WalletDepositPage       = lazy(() => import("@/pages/WalletDepositPage").then(m => ({ default: m.WalletDepositPage })));
+const ProfilePage             = lazy(() => import("@/pages/ProfilePage").then(m => ({ default: m.ProfilePage })));
+const NotificationsPage       = lazy(() => import("@/pages/NotificationsPage").then(m => ({ default: m.NotificationsPage })));
+const SupportPage             = lazy(() => import("@/pages/SupportPage").then(m => ({ default: m.SupportPage })));
+const NotFoundPage            = lazy(() => import("@/pages/NotFoundPage").then(m => ({ default: m.NotFoundPage })));
+const ReportPage              = lazy(() => import("@/pages/ReportPage").then(m => ({ default: m.ReportPage })));
 
 export function App() {
   const { authenticate, isLoading, isAuthenticated, error } = useAuthStore();
@@ -84,7 +84,8 @@ export function App() {
           DEV MODE — Mock User (ID: 999999999)
         </div>
       )}
-      <Routes>
+      <Suspense fallback={<FullPageSpinner />}>
+        <Routes>
         <Route path="/"                              element={<HomePage />} />
         <Route path="/services"                      element={<ServicesPage />} />
         <Route path="/services/:slug"                element={<ServiceDetailPage />} />
@@ -106,6 +107,7 @@ export function App() {
         <Route path="/404"                           element={<NotFoundPage />} />
         <Route path="*"                              element={<Navigate to="/404" replace />} />
       </Routes>
+      </Suspense>
       <BottomNav />
     </div>
   );

@@ -33,8 +33,18 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          react: ["react", "react-dom", "react-router-dom"],
-          query: ["@tanstack/react-query"],
+          // Core React runtime — changes rarely, long cache lifetime
+          "vendor-react": ["react", "react-dom", "react-router-dom"],
+          // Data fetching — changes rarely
+          "vendor-query": ["@tanstack/react-query"],
+          // HTTP client
+          "vendor-axios": ["axios"],
+          // Form handling + validation
+          "vendor-forms": ["react-hook-form", "@hookform/resolvers", "zod"],
+          // i18n — large, changes rarely
+          "vendor-i18n": ["i18next", "react-i18next"],
+          // Telegram SDK
+          "vendor-twa": ["@twa-dev/sdk"],
         },
       },
     },
