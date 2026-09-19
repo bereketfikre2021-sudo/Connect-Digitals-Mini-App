@@ -27,6 +27,9 @@ export function PaymentSubmitPage() {
   const [uploadError,       setUploadError]       = useState<string | null>(null);
   const [uploading,         setUploading]         = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // Stable idempotency key — stays the same across re-renders so a retry
+  // doesn't create a duplicate payment record.
+  const idempotencyKeyRef = useRef<string>(randomUUID());
 
   const { register, handleSubmit, formState: { errors, isValid } } = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -60,10 +63,14 @@ export function PaymentSubmitPage() {
     mutationFn: (values: FormValues) => api.post("/payments", {
       orderId,
       paymentMethodId: method?.id,
-      amountETB: orderAmount ?? 0,
-      reference: values.transferDate,   // stored as reference field in DB
+      // amountETB is authoritative server-side for order payments — the
+      // service reads it from the Order record and ignores this value.
+      // Send 1 (minimum positive) as a safe sentinel so validation passes
+      // even if orderAmount was lost from location.state on page refresh.
+      amountETB: orderAmount ?? 1,
+      reference: values.transferDate,
       screenshotKey: screenshotKey ?? undefined,
-      idempotencyKey: randomUUID(),
+      idempotencyKey: idempotencyKeyRef.current,
     }),
     onSuccess: () => { hapticSuccess(); navigate(`/orders/${orderId}`, { replace: true }); },
     onError:   () => hapticError(),
