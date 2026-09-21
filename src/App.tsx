@@ -33,7 +33,15 @@ export function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    try { WebApp.ready(); WebApp.expand(); } catch { /* noop in dev */ }
+    try {
+      WebApp.ready();
+      WebApp.expand();
+      // Set the Telegram header bar to match the app's navy brand color
+      // so the "Connect Digitals" title text becomes white and clearly visible.
+      WebApp.setHeaderColor("#000F33");
+      // Also set the bottom bar color for devices that show it
+      WebApp.setBackgroundColor("#000F33");
+    } catch { /* noop in dev */ }
     authenticate();
   }, [authenticate]);
 
